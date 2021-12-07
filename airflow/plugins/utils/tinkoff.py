@@ -14,7 +14,7 @@ def _get_api_params_from_config() -> dict:
     }
 
 
-def _get_data_by_ticker_and_period(
+def get_data_by_ticker_and_period(
         ticker: str,
         period_in_days: int = 365,
         freq: tinvest.CandleResolution = tinvest.CandleResolution.day

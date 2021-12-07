@@ -8,7 +8,7 @@ import pandas as pd
 def _get_db_url(connector: str) -> str:
     connection = BaseHook.get_connection(connector)
 
-    return f'user={connection.login} password = {connection.spassword} host = {connection.host} ' \
+    return f'user={connection.login} password = {connection.password} host = {connection.host} ' \
            f'port = {connection.port} dbname = {connection.schema} '
 
 
