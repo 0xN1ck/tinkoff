@@ -17,9 +17,9 @@ def apply_strategy(
 
 
 def cross_sma_strategy(
+        data: pd.DataFrame,
         sma_short: int,
         sma_long: int,
-        data: pd.DataFrame,
 ) -> pd.DataFrame:
     data['sma_short'] = data['close'].rolling(sma_short).mean()
     data['sma_long'] = data['close'].rolling(sma_long).mean()
