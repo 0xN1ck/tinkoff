@@ -1,6 +1,19 @@
 import pandas as pd
 import numpy as np
 from utils import db
+from typing import Callable
+
+
+def apply_strategy(
+        connector: str,
+        source_table_name: str,
+        ticker: str,
+        strategy_func: Callable,
+        op_kwargs: dict
+) -> None:
+    data = db.get_data_from_table(connector, source_table_name)
+    signal = strategy_func(data, **op_kwargs).assign(ticker=ticker)
+    db.load_df_to_db(connector, signal, 'signal')
 
 
 def cross_sma_strategy(
@@ -32,4 +45,4 @@ def bollinger_bands_strategy(
     data['position'] = np.where(data['distance'] * data['distance'].shift(1) < 0, 0, data['position'])
     data['position'] = data['position'].ffill().fillna(0)
 
-    return data[['time', 'position']].tail(1).assign(strategy_type='bollinger ')
+    return data[['time', 'position']].tail(1).assign(strategy_type='bollinger')
