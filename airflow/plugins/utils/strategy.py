@@ -11,7 +11,7 @@ def apply_strategy(
         strategy_func: Callable,
         op_kwargs: dict
 ) -> None:
-    data = db.get_data_from_table(connector, source_table_name)
+    data = db.get_data_from_price_table(connector, source_table_name)
     signal = strategy_func(data, **op_kwargs).assign(ticker=ticker)
     db.load_df_to_db(connector, signal, 'signal')
 
@@ -44,5 +44,6 @@ def bollinger_bands_strategy(
     data['position'] = np.where(data['close'] > data['upper'], -1, data['position'])
     data['position'] = np.where(data['distance'] * data['distance'].shift(1) < 0, 0, data['position'])
     data['position'] = data['position'].ffill().fillna(0)
+    data['position'] = data['position'].astype('int8')
 
     return data[['time', 'position']].tail(1).assign(strategy_type='bollinger')

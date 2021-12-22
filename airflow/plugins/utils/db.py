@@ -29,7 +29,8 @@ def load_df_to_db(connector: str, df: pd.DataFrame, table_name: str) -> None:
     conn.commit()
     conn.close()
 
-def get_data_from_table(connector: str, table_name: str, filter_: str = None) -> pd.DataFrame:
+
+def get_data_from_price_table(connector: str, table_name: str, filter_: str = None) -> pd.DataFrame:
     query = f"""
         SELECT time,
                open,
@@ -39,6 +40,21 @@ def get_data_from_table(connector: str, table_name: str, filter_: str = None) ->
                volume
         FROM {table_name}
         {filter_}
+    """
+    with psycopg2.connect(dsn=_get_db_url(connector)) as conn:
+        data = pd.read_sql(query, conn)
+
+    return data
+
+
+def get_data_from_signal_table(connector: str, filter_: str) -> pd.DataFrame:
+    query = f"""
+        SELECT  time,
+                position,
+                strategy_type,
+                ticker
+        FROM signal
+        {filter_}                
     """
     with psycopg2.connect(dsn=_get_db_url(connector)) as conn:
         data = pd.read_sql(query, conn)
