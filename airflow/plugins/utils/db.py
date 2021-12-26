@@ -60,3 +60,13 @@ def get_data_from_signal_table(connector: str, filter_: str) -> pd.DataFrame:
         data = pd.read_sql(query, conn)
 
     return data
+
+def get_last_price_from_price_table(connector: str, table_name: str) -> float:
+    data = get_data_from_price_table(
+        connector,
+        table_name,
+        f"WHERE time = (SELECT max(time) FROM {table_name})"
+    )
+    data = data.sort_values(by='time', ascending=False)
+
+    return data.iloc[0]['close']
